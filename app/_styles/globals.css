@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --green: #105415;
+  --greenopac: #1054154f;
+  --blue: #08085e;
+  --yellow: #b3ae14;
+  --orange: #b36b14;
+  --black: #000000;
+  --blacklight: #2d2d2d;
+  --blacknotopac: #151515,
+  --blackopac: #151515ee;
+  --blackopac2: #15151560;
+  --blackopac3: #131313;
+  --pureblack: #000000;
+  --white: #ffffff;
+  --whiteBG: #f9f9fa;
+  --whiteBGDarker: #e7e7e7e7;
+  --whiteopac: #ffffff2f;
+  --whiteopac2: #ffffff10;
+  --whiteopac3: #ffffff05;
+  --titan: #cecdcd;
+  --titanopac: #cecdcdaa;
+  --cream: #ede7d1;
+  --red: #371211;
+  --vividred: #b31414ee;
+  --novablue: #344aec;
+  --gold: #d4af37;
+  --rolexgold: #a37e2c;
+  --rolexgoldopac: #a37e2caa;
+  --whatsapp: #25d366;
+  --whiteopacred: #B3141425;
+}
+
+html {
+  font-family: theme('fontFamily.sans');
+}
+
+body {
+  color: var(--white);
+  background: var(--black);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Customize the appearance of the default focus ring (outline) */
+input[type='radio']:focus {
+  @apply ring-2 ring-red; /* Apply a red focus ring */
+}
+input[type='checkbox']:focus {
+  @apply ring-2 ring-white; /* Apply a red focus ring */
+}
+
+input[type='radio'] {
+  color: var(--red);
+}
+
+input[type='checkbox'] {
+  color: var(--white);
+}
+input[type='checkbox']:checked {
+  color: var(--vividred);
+}
+
+/* Hide the spinner (arrows) in number input fields */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield; /* Firefox */
+}
+input[type='number']:focus {
+  @apply ring-0 ring-red rounded;
+}
+input[type='text']::-webkit-outer-spin-button,
+input[type='text']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='text'] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input[type='text']:focus {
+  @apply ring-0 ring-red rounded;
+}
+
+.loader {
+  border: 4px solid rgba(184, 105, 105, 0.2); /* Light red for the outer part */
+  border-top: 4px solid rgb(119, 9, 9); /* Solid red for the spinning part */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

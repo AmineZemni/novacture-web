@@ -1,0 +1,42 @@
+name: PR Continuous Integration - NOVACTURE WEB
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    strategy:
+      matrix:
+        node-version: [22.15.0]
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          yarn: cache
+      - name: Install dependencies
+        run: yarn
+      - name: Lint project
+        run: yarn lint
+      - name: Tests
+        run: yarn test:ci
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
