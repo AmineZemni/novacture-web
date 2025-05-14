@@ -69,6 +69,7 @@ export default function Dashboard() {
                 },
                 body: JSON.stringify({ runName })
               })
+              alert('Workflow started successfully')
 
               try {
                 fetch(`/api/users/${userId}/runs?userKey=${userKey}`)

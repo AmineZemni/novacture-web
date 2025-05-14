@@ -29,6 +29,6 @@ export async function postRunIDI(
 ): Promise<void> {
   const formData = new FormData()
   formData.append('run_name', runName)
-  // formData.append('mocked', 'true')
+  formData.append('mocked', 'true')
   apiPostFormData(`users/${userId}/runs/idi`, formData, userKey)
 }
