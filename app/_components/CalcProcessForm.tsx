@@ -40,9 +40,28 @@ export default function CalcProcessForm({
     index: number,
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    const target = e.target
+
     const updated = [...forms]
-    // @ts-ignore
-    updated[index][e.target.name] = e.target.value
+
+    if (target instanceof HTMLInputElement) {
+      const { name, value, type, checked } = target
+      if (type === 'checkbox') {
+        // @ts-ignore
+        updated[index][name] = checked ? 1 : 0
+      } else if (type === 'number' || type === 'range') {
+        // @ts-ignore
+        updated[index][name] = Number(value)
+      } else {
+        // @ts-ignore
+        updated[index][name] = value
+      }
+    } else if (target instanceof HTMLSelectElement) {
+      const { name, value } = target
+      // @ts-ignore
+      updated[index][name] = value
+    }
+
     setForms(updated)
   }
 
@@ -111,75 +130,143 @@ export default function CalcProcessForm({
       {forms.map((form, index) => (
         <div key={index} className='border p-4 rounded bg-gray-50 relative'>
           <h2 className='font-semibold text-lg mb-2'>
-            Unit of Account {index + 1}
+            Calculation Process {index + 1}
           </h2>
 
+          {/* calc_process_id */}
           <div className='mb-3'>
-            <label className='block mb-1 font-medium'>Unit of Account ID</label>
+            <label className='block mb-1 font-medium'>
+              Calculation Process ID
+            </label>
             <input
               type='text'
+              name='calc_process_id'
+              value={form.calc_process_id}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded p-2 w-full'
+              required
+            />
+          </div>
+
+          {/* uoa_id */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>Unit of Account ID</label>
+            <select
               name='uoa_id'
               value={form.uoa_id}
               onChange={(e) => handleChange(index, e)}
               className='border rounded p-2 w-full'
               required
-            />
-          </div>
-
-          <div className='mb-3'>
-            <label className='block mb-1 font-medium'>Scenario ID</label>
-            <input
-              type='text'
-              name='scenario_id'
-              value={form.scenario_id}
-              onChange={(e) => handleChange(index, e)}
-              className='border rounded p-2 w-full'
-              required
-            />
-          </div>
-
-          <div className='mb-3'>
-            <label className='block mb-1 font-medium'>
-              Initial Recognition Date
-            </label>
-            <input
-              type='date'
-              name='uoa_initrecog_date'
-              value={form.uoa_initrecog_date}
-              onChange={(e) => handleChange(index, e)}
-              className='border rounded p-2 w-full'
-              required
-            />
-          </div>
-
-          <div className='mb-3'>
-            <label className='block mb-1 font-medium'>Expiry Date</label>
-            <input
-              type='date'
-              name='uoa_expiry_date'
-              value={form.uoa_expiry_date}
-              onChange={(e) => handleChange(index, e)}
-              className='border rounded p-2 w-full'
-              required
-            />
-          </div>
-
-          <div className='mb-3'>
-            <label className='block mb-1 font-medium'>Yield Curve</label>
-            <select
-              name='lkd_yield_curve'
-              value={form.lkd_yield_curve}
-              onChange={(e) => handleChange(index, e)}
-              className='border rounded p-2 w-full'
-              required
             >
-              <option value=''>Select Yield Curve</option>
-              {yieldCurveIds.map((id) => (
+              <option value=''>Select UoA</option>
+              {uoaIds.map((id) => (
                 <option key={id} value={id}>
                   {id}
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* calc_start_date */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>
+              Calculation Start Date
+            </label>
+            <input
+              type='date'
+              name='calc_start_date'
+              value={form.calc_start_date}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded p-2 w-full'
+              required
+            />
+          </div>
+
+          {/* calc_end_date */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>
+              Calculation End Date
+            </label>
+            <input
+              type='date'
+              name='calc_end_date'
+              value={form.calc_end_date}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded p-2 w-full'
+              required
+            />
+          </div>
+
+          {/* calc_freq dropdown */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>
+              Calculation Frequency
+            </label>
+            <select
+              name='calc_freq'
+              value={form.calc_freq}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded p-2 w-full'
+              required
+            >
+              <option value=''>Select Frequency</option>
+              <option value='m'>Monthly</option>
+              <option value='q'>Quarterly</option>
+              <option value='y'>Yearly</option>
+            </select>
+          </div>
+
+          {/* lc_calc_activated */}
+          <div className='mb-3 flex items-center gap-2'>
+            <input
+              type='checkbox'
+              name='lc_calc_activated'
+              checked={form.lc_calc_activated === 1}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded'
+            />
+            <label className='font-medium'>LC Calculation Activated</label>
+          </div>
+
+          {/* lic_calc_activated */}
+          <div className='mb-3 flex items-center gap-2'>
+            <input
+              type='checkbox'
+              name='lic_calc_activated'
+              checked={form.lic_calc_activated === 1}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded'
+            />
+            <label className='font-medium'>LIC Calculation Activated</label>
+          </div>
+
+          {/* calc_precision slider */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>
+              Calculation Precision ({form.calc_precision}%)
+            </label>
+            <input
+              type='range'
+              name='calc_precision'
+              min={0}
+              max={100}
+              step={1}
+              value={form.calc_precision}
+              onChange={(e) => handleChange(index, e)}
+              className='w-full'
+            />
+          </div>
+
+          {/* sensitivity_type */}
+          <div className='mb-3'>
+            <label className='block mb-1 font-medium'>Sensitivity Type</label>
+            <input
+              type='text'
+              name='sensitivity_type'
+              value={form.sensitivity_type}
+              onChange={(e) => handleChange(index, e)}
+              className='border rounded p-2 w-full'
+            />
           </div>
 
           {forms.length > 1 && (
@@ -199,7 +286,7 @@ export default function CalcProcessForm({
         onClick={handleAddForm}
         className='py-2 px-4 rounded self-end text-novablue bg-white border border-novablue'
       >
-        ➕ Add more unit of account
+        ➕ Add more calculation process
       </button>
 
       <button
@@ -218,11 +305,11 @@ export default function CalcProcessForm({
       {success && (
         <div className='mt-4 flex items-center gap-4 justify-end'>
           <span className='text-green font-semibold'>
-            Units of Accounts successfully uploaded
+            Calculation processes successfully uploaded
           </span>
           <button
             type='button'
-            onClick={() => router.push(`calc-process`)}
+            onClick={() => router.push(`report-process`)}
             className='bg-green text-white py-2 px-4 rounded font-semibold'
           >
             Next Step

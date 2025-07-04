@@ -5,6 +5,7 @@ import { Run, RunStatus } from '../../api/services/runs.service'
 import Cookies from 'js-cookie'
 import { WorkflowName } from '../../api/services/workflows.service'
 import { useRouter } from 'next/navigation'
+import dayjs from 'dayjs'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -253,86 +254,95 @@ export default function Dashboard() {
           <div className='text-lg text-blackopac mt-20 mb-3'>
             Previous projects
           </div>
-          <div>
-            <div className='text-black flex flex-col items-center justify-center border border-titan rounded-lg p-10'>
-              {runs && runs.length > 0 ? (
-                runs.map((run) => (
-                  <div
-                    key={run.id}
-                    className='bg-white shadow-md rounded-lg p-4 m-2 w-full max-w-md'
-                  >
-                    <h2 className='text-lg font-semibold'>{run.name}</h2>
+
+          <div className='text-black flex flex-col items-center justify-center border border-titan rounded-lg p-10'>
+            {runs && runs.length > 0 ? (
+              runs.map((run) => (
+                <div
+                  key={run.id}
+                  className='bg-white shadow-md rounded-lg p-4 m-2 w-1/2'
+                >
+                  <div className='space-y-2 rounded-md  p-4 shadow'>
+                    <h2 className='text-xl font-bold text-gray-800'>
+                      {run.name}
+                    </h2>
                     <p className='text-gray-600'>
-                      Workflow: {run.workflow_name}
+                      <span className='font-semibold'>Workflow</span>{' '}
+                      {run.workflow_name}
                     </p>
                     <p className='text-gray-600'>
-                      Planned date: {run.planned_date}
+                      <span className='font-semibold'>Planned date</span>{' '}
+                      {formatDate(run.planned_date)}
                     </p>
                     {run.end_date && (
-                      <p className='text-gray-600'>End date: {run.end_date}</p>
+                      <p className='text-gray-600'>
+                        <span className='font-semibold'>End date</span>{' '}
+                        {formatDate(run.end_date)}
+                      </p>
                     )}
-                    <p className='text-gray-600'>
-                      Status: {mapRunStatusToText(run.status)}
+                    <p className='text-lg'>
+                      <span className='font-bold'>Status</span>{' '}
+                      {mapRunStatusToText(run.status)}
                     </p>
-                    {run.files && run.files.length > 0 && (
-                      <div className='mt-2'>
-                        <h3 className='text-md font-semibold'>Files</h3>
-                        <ul className='ml-4 text-novablue underline list-inside'>
-                          {run.files.map((file) => (
-                            <li key={file.name}>
-                              <a
-                                href={file.url}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='text-blue-500 hover:underline'
-                              >
-                                {file.name}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                  </div>
+                  {run.files && run.files.length > 0 && (
+                    <div className='mt-2 space-y-2 rounded-md  p-4 shadow'>
+                      <h3 className='text-md font-semibold'>Files</h3>
+                      <ul className='ml-4 text-novablue underline list-inside'>
+                        {run.files.map((file) => (
+                          <li key={file.name}>
+                            <a
+                              href={file.url}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              className='text-blue-500 hover:underline'
+                            >
+                              {file.name}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  <div className='w-full flex justify-end space-x-2'>
+                    {run.status !== RunStatus.SUCCESS && (
+                      <button
+                        className='border border-novablue text-novablue py-2 px-4 rounded transition mt-4'
+                        onClick={() =>
+                          router.push(
+                            `/projects/${run.id}${mapRunStatusToUrl(
+                              run.status
+                            )}`
+                          )
+                        }
+                      >
+                        Resume project
+                      </button>
                     )}
-                    <div className='w-full flex justify-end space-x-2'>
-                      {run.status !== RunStatus.SUCCESS && (
+                    {run.status === RunStatus.SUCCESS && (
+                      <>
                         <button
                           className='border border-novablue text-novablue py-2 px-4 rounded transition mt-4'
                           onClick={() =>
-                            router.push(
-                              `/projects/${run.id}${mapRunStatusToUrl(
-                                run.status
-                              )}`
-                            )
+                            router.push(`/projects/${run.id}/generator`)
                           }
                         >
-                          Resume project
+                          Retry project
                         </button>
-                      )}
-                      {run.status === RunStatus.SUCCESS && (
-                        <>
-                          <button
-                            className='border border-novablue text-novablue py-2 px-4 rounded transition mt-4'
-                            onClick={() =>
-                              router.push(`/projects/${run.id}/engine`)
-                            }
-                          >
-                            Retry project
-                          </button>
-                          <button
-                            className='bg-novablue text-white py-2 px-4 rounded transition mt-4'
-                            onClick={() => router.push(`/projects/${run.id}`)}
-                          >
-                            View details
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button
+                          className='bg-novablue text-white py-2 px-4 rounded transition mt-4'
+                          onClick={() => router.push(`/projects/${run.id}`)}
+                        >
+                          View details
+                        </button>
+                      </>
+                    )}
                   </div>
-                ))
-              ) : (
-                <p>No previous runs found.</p>
-              )}
-            </div>
+                </div>
+              ))
+            ) : (
+              <p>No previous runs found.</p>
+            )}
           </div>
         </div>
       )}
@@ -349,9 +359,8 @@ function mapRunStatusToUrl(status: RunStatus): string {
     case RunStatus.CALC_PROCESS:
       return '/report-process'
     case RunStatus.REPORT_PROCESS:
-      return '/generator'
     case RunStatus.GENERATOR:
-      return '/engine'
+      return '/generator'
     default:
       return ''
   }
@@ -366,7 +375,7 @@ function mapRunStatusToText(status: RunStatus): string {
     case RunStatus.CALC_PROCESS:
       return 'Uploading report process'
     case RunStatus.REPORT_PROCESS:
-      return 'Generating'
+      return 'Generator'
     case RunStatus.GENERATOR:
       return 'Running engine'
     case RunStatus.SUCCESS:
@@ -376,4 +385,8 @@ function mapRunStatusToText(status: RunStatus): string {
     default:
       return 'Unknown'
   }
+}
+
+const formatDate = (dateStr: string) => {
+  return dateStr ? dayjs(dateStr).format('MMMM D, YYYY') : '-'
 }

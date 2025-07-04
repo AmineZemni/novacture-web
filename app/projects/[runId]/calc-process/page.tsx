@@ -22,8 +22,12 @@ export default async function CalcProcessPage({ params }: Props) {
     userKey
   )
 
-  if (!preGeneratorInputs) {
-    return <div>Failed to load pre-generator inputs</div>
+  if (!preGeneratorInputs || !preGeneratorInputs.uoa_ids) {
+    return (
+      <div className='text-vividred w-full text-center mt-24 text-xl'>
+        Failed to load pre-generator inputs
+      </div>
+    )
   }
 
   return (

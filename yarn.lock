@@ -2306,6 +2306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.13":
+  version: 1.11.13
+  resolution: "dayjs@npm:1.11.13"
+  checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
+  languageName: node
+  linkType: hard
+
 "debug@npm:4, debug@npm:^4.0.1, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.3.6":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
@@ -4993,6 +5000,7 @@ __metadata:
     chai: "npm:^4.4.1"
     chai-as-promised: "npm:^7.1.2"
     chai-exclude: "npm:^2.1.0"
+    dayjs: "npm:^1.11.13"
     dirty-chai: "npm:^2.0.1"
     dotenv: "npm:^16.4.5"
     dotvault: "npm:^0.0.9"

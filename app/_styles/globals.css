@@ -65,7 +65,7 @@ input[type='checkbox'] {
   color: var(--white);
 }
 input[type='checkbox']:checked {
-  color: var(--vividred);
+  color: var(--novablue);
 }
 
 /* Hide the spinner (arrows) in number input fields */

@@ -34,6 +34,7 @@ export interface IFRSPreGeneratorInputsIdsResponse {
   run_id: string
   uoa_ids: string[]
   yield_curve_ids: string[]
+  calc_process_ids: string[]
 }
 
 export interface IFRSUnitOfAccountInput {
@@ -42,6 +43,27 @@ export interface IFRSUnitOfAccountInput {
   uoa_initrecog_date: string
   uoa_expiry_date: string
   lkd_yield_curve: string
+}
+
+export interface IFRSEngineFiles {
+  name: string
+  url: string
+}
+
+export interface IFRSEngineDataframes {
+  report_process_id: string
+  dataframes: IFRSEngineFiles[]
+}
+
+export interface IFRSEngineUOA {
+  uoa_id: string
+  report_process_dataframes: IFRSEngineDataframes[]
+}
+
+export interface IFRSEngineResponse {
+  run_id: string
+  input_structure_errors?: string[] | null
+  files?: IFRSEngineUOA[] | null
 }
 
 export async function postIfrsCalcProcessInput(
@@ -132,6 +154,24 @@ export async function postUnitsOfAccount(
     return true
   } catch (e) {
     if (e instanceof ApiError) return false
+    throw e
+  }
+}
+
+export async function postIFRSEngine(
+  userId: string,
+  runId: string,
+  userKey: string
+): Promise<IFRSEngineResponse | undefined> {
+  try {
+    const { content } = await apiPost<IFRSEngineResponse>(
+      `users/${userId}/runs/${runId}/ifrs/engine`,
+      {},
+      userKey
+    )
+    return content
+  } catch (e) {
+    if (e instanceof ApiError) return undefined
     throw e
   }
 }

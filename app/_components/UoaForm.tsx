@@ -19,7 +19,7 @@ export default function UoaForm({
 
   const emptyFormValues = (): IFRSUnitOfAccountInput => ({
     uoa_id: '',
-    scenario_id: '',
+    scenario_id: 'base',
     uoa_initrecog_date: '',
     uoa_expiry_date: '',
     lkd_yield_curve: ''
