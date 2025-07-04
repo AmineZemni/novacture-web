@@ -37,11 +37,11 @@ export async function apiPost<T = void>(
   return fetchJson(`${apiURL}/${path}`, reqInit)
 }
 
-export async function apiPostFormData(
+export async function apiPostFormData<T = void>(
   path: string,
   payload: FormData,
   userKey?: string
-): Promise<unknown> {
+): Promise<{ content: T; headers: Headers }> {
   const headers = new Headers({
     'X-API-KEY': apiKey,
     'X-USER-KEY': userKey || ''
@@ -53,11 +53,7 @@ export async function apiPostFormData(
   }
   if (payload) reqInit.body = payload
 
-  const { content }: { content: unknown } = await fetchJson(
-    `${apiURL}/${path}`,
-    reqInit
-  )
-  return content
+  return fetchJson(`${apiURL}/${path}`, reqInit)
 }
 
 export async function apiPut(
@@ -92,10 +88,11 @@ export async function apiPatch(
   })
 }
 
-export async function apiDelete(path: string): Promise<void> {
+export async function apiDelete(path: string, userKey?: string): Promise<void> {
   const headers = new Headers({
     'X-API-KEY': apiKey,
-    'content-type': 'application/json'
+    'content-type': 'application/json',
+    'X-USER-KEY': userKey || ''
   })
 
   await fetchNoContent(`${apiURL}/${path}`, {

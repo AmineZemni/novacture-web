@@ -51,14 +51,14 @@ body {
 
 /* Customize the appearance of the default focus ring (outline) */
 input[type='radio']:focus {
-  @apply ring-2 ring-red; /* Apply a red focus ring */
+  @apply ring-2 ring-novablue; /* Apply a red focus ring */
 }
 input[type='checkbox']:focus {
   @apply ring-2 ring-white; /* Apply a red focus ring */
 }
 
 input[type='radio'] {
-  color: var(--red);
+  color: var(--novablue);
 }
 
 input[type='checkbox'] {

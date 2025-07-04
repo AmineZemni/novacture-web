@@ -3,6 +3,9 @@ export default function Footer() {
     <div className=''>
       <footer className='flex flex-col justify-around items-center mt-1 lg:mt-2 text-xs lg:text-base text-white'>
         <p className=''>Copyright Novacture - 2025</p>
+        <a className='underline' href='/contact'>
+          Contact us
+        </a>
 
         <div className='flex flex-row space-x-2 m-2 lg:m-4'>
           <a

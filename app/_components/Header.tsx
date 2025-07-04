@@ -1,5 +1,6 @@
 'use client'
 
+import Cookies from 'js-cookie'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
@@ -7,6 +8,12 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef(null)
   const menuButtonRef = useRef(null)
+  const [userName, setUserName] = useState<string | null>(null)
+
+  useEffect(() => {
+    const storedUserName = Cookies.get('userName')
+    setUserName(storedUserName || null)
+  }, [])
 
   const switchMenu = () => {
     setIsMenuOpen((prev) => !prev)
@@ -53,46 +60,64 @@ export default function Header() {
             <img
               src='/logo_rect.png'
               alt='app.novacture.com'
-              className='rounded-lg h-24 hover:invert'
+              className='rounded-lg h-24 hover:opacity-85'
             />
           </button>
 
           {/* Mobile Burger Menu Icon on the Left */}
-          <button
-            onClick={switchMenu}
-            ref={menuButtonRef}
-            className='xl:hidden flex flex-col lg:flex-row-reverse items-center text-white'
-          >
-            <img
-              src='/menu.svg'
-              className='h-7 lg:h-12 w-7 lg:w-12'
-              alt='Ouvrir le menu'
-            />
-            <span className='text-xs lg:text-base lg:mr-2 -mt-1'>Menu</span>
-          </button>
+          {userName && (
+            <button
+              onClick={switchMenu}
+              ref={menuButtonRef}
+              className='xl:hidden flex flex-col lg:flex-row-reverse items-center text-white'
+            >
+              <img
+                src='/menu.svg'
+                className='h-7 lg:h-12 w-7 lg:w-12'
+                alt='Ouvrir le menu'
+              />
+              <span className='text-xs lg:text-base lg:mr-2 -mt-1'>Menu</span>
+            </button>
+          )}
 
           {/* Desktop Menu Links */}
-          <nav className='hidden xl:flex space-x-5'>
-            <Link
-              className='flex space-x-2 items-center hover:underline'
-              href='/dashboard'
-            >
-              <img src='/gears.svg' className='h-5' />
-              <p className='text-sm'>My dashboard</p>
-            </Link>
-            <Link
-              className='flex space-x-2 items-center hover:underline'
-              href='/profile'
-            >
-              <img src='/man.svg' className='h-5' />
-              <p className='text-sm'>Profile</p>
-            </Link>
-          </nav>
+          {userName && (
+            <nav className='hidden xl:flex space-x-5'>
+              <Link
+                className='flex space-x-2 items-center hover:underline'
+                href='/dashboard'
+              >
+                <img src='/gears.svg' className='h-5' />
+                <p className='text-sm'>My dashboard</p>
+              </Link>
+              <Link
+                className='flex space-x-2 items-center hover:underline'
+                href='/profile'
+              >
+                <img src='/man.svg' className='h-5' />
+                <p className='text-sm'>{userName}</p>
+              </Link>
+
+              <Link
+                className='flex space-x-2 items-center hover:underline'
+                href='/'
+                onClick={() => {
+                  Cookies.remove('userKey')
+                  Cookies.remove('userId')
+                  Cookies.remove('userName')
+                  window.location.href = '/'
+                }}
+              >
+                <img src='/logout.svg' className='h-5' />
+                <p className='text-sm'>Logout</p>
+              </Link>
+            </nav>
+          )}
         </header>
       </div>
 
       {/* Mobile Menu */}
-      {isMenuOpen && (
+      {isMenuOpen && userName && (
         <div
           ref={menuRef}
           className='xl:hidden fixed bg-blackopac top-10 w-full text-white z-50 lg:w-4/6 inset-x-0 text-center mx-auto'
@@ -112,8 +137,21 @@ export default function Header() {
             className='w-full block px-4 py-2 hover:bg-whiteopac bg-novablue border-b border-whiteopac2 flex justify-end'
             onClick={() => setIsMenuOpen(false)}
           >
-            Profile
+            {userName}
             <img src='/man.svg' className='h-6 ml-2 mr-1' />
+          </Link>
+          <Link
+            href='/'
+            className='w-full block px-4 py-2 hover:bg-whiteopac bg-novablue border-b border-whiteopac2 flex justify-end'
+            onClick={() => {
+              Cookies.remove('userKey')
+              Cookies.remove('userId')
+              Cookies.remove('userName')
+              window.location.href = '/'
+            }}
+          >
+            Logout
+            <img src='/logout.svg' className='h-6 ml-2 mr-1' />
           </Link>
         </div>
       )}
